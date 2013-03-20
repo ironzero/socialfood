@@ -1,0 +1,85 @@
+.btn-bordok {
+	background-color: #6B66FF;
+	cursor: pointer;
+	height: 23px;
+	width: 62px;
+	border: none;
+}
+
+.btn-bordcancel {
+	background-color: #FF3636;
+	cursor: pointer;
+	height: 23px;
+	width: 62px;
+	border: none;
+}
+table {
+    border-collapse: collapse;
+    width: 40em;
+    border: 2px solid #ddd;
+}
+
+th, td{
+    padding: 0.1em 1em;
+    font: 9pt sans-serif;
+}
+
+caption{
+    font: bold 1.2em sans-serif;
+    margin: 1em 0;
+}
+
+col{
+    border-right: 1px solid #ccc;
+}
+col#album{
+    border: none;
+}
+
+thead{
+    background-color: #ddd;
+    border-top: 1px solid #a5a5a5;
+    border-bottom: 1px solid #a5a5a5;
+}
+
+th{
+    font-weight: normal;
+    text-align: center;
+}
+
+#artistNumHead{
+    text-indent: -1000em;
+}
+
+.odd{
+    background-color:#edf5ff;
+}
+
+tr:hover{
+    background-color: #3d80df;
+    color: #fff;
+}
+
+thead tr:hover, tfoot tr:hover{
+    background-color: transparent;
+    color: inherit;
+}
+
+thead td{
+    border-right: 1px solid #EEE;
+}
+
+A:link {
+	COLOR: #374273; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #374273; TEXT-DECORATION: none
+}
+
+
+INPUT,TEXTAREA {border:expression('1px solid #7f9db9');} 
+
+table {
+	width: 760px;
+	border-collapse: separate;
+}

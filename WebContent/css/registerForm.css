@@ -1,0 +1,61 @@
+body {
+	background-color: #9cbc2c;
+	font-family: "휴먼매직체";
+}
+table {
+	text-align: left;
+	width: 70%;
+	margin-left: 15%;
+	margin-right: 15%;
+	border-color: #e3ebc3;
+	border-style: dashed;
+	border-width: medium;
+	border-radius: 20px;
+	line-height: 25px;
+}
+table.check {
+	width: 90%;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+table td.title {
+	background-color: #D8F781;
+	border-radius: 20px;
+	border-color: black;
+	font-family: "휴먼매직체";
+	font-size: x-large;
+	font-weight: bold;
+	text-shadow: white;
+	padding: 10px 10px;
+}
+
+table td.tag {
+	background-color: #b9cf6a;
+	border-radius: 5px;
+	border-color: black;
+	text-align: center;
+}
+
+table td {
+	border-radius: 5px;
+	border-color: black;
+}
+
+table button {
+	background-color: #384313;
+	border-radius: 20px; 
+	color: #FFFFFF;
+	
+}
+table select {
+	border-radius: 5px;
+}
+table input {
+	border-radius: 5px;
+	font-family: "휴먼매직체";
+}
+table td.info {
+	text-align: center;
+	color: #AA1111;
+}
