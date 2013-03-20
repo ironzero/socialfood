@@ -1,11 +1,9 @@
-package my.shop;
+package my.shop.db;
 
 import java.sql.Timestamp;
 
 public class ShopDataBean {
 	
-	private int cou_num, cou_usage;
-	private String cou_name, cou_owner;
 	private int shop_id, shop_priceoriginal, shop_pricesale;
 	private String shop_name,shop_imagefilename,shop_detail ;
 	private long shop_imagefilesize;
@@ -13,30 +11,7 @@ public class ShopDataBean {
 	private int comm_num, comm_depth, comm_step, comm_content;
 	private Timestamp comm_wdate;
 	
-	public int getCou_num() {
-		return cou_num;
-	}
-	public void setCou_num(int cou_num) {
-		this.cou_num = cou_num;
-	}
-	public int getCou_usage() {
-		return cou_usage;
-	}
-	public void setCou_usage(int cou_usage) {
-		this.cou_usage = cou_usage;
-	}
-	public String getCou_name() {
-		return cou_name;
-	}
-	public void setCou_name(String cou_name) {
-		this.cou_name = cou_name;
-	}
-	public String getCou_owner() {
-		return cou_owner;
-	}
-	public void setCou_owner(String cou_owner) {
-		this.cou_owner = cou_owner;
-	}
+	
 	public int getShop_id() {
 		return shop_id;
 	}

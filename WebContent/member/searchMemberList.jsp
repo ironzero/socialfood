@@ -125,7 +125,7 @@ $(function() {
 				</tr>
 				<tr class="ac">
 					<td align="right" colspan="7">
-						<input type="button" value="보유 쿠폰 리스트" />
+						<input type="button" value="보유 쿠폰 리스트" onclick="myCoupon('${member.id}')" />
 						<input type="button" value="작성 글 보기" />
 						<input type="button" value="강제 탈퇴" onclick="deleteMember('${member.id}','${colName}','${search}')"/>
 					</td>

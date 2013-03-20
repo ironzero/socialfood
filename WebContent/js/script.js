@@ -232,3 +232,8 @@ function deleteMember(member, colName, search) {
 	}
 }
 
+// my coupon list
+function myCoupon(member) {
+	sub = window.open('myCouponList.do?id=' + member, 'sub', 'width=900, height=600');
+}
+
