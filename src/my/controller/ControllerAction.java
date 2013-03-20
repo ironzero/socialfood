@@ -6,7 +6,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import my.action.*;
 public class ControllerAction extends HttpServlet{
-	private Map commandMap = new HashMap();
+	private static final long serialVersionUID = 1L;
+	private Map<String, Object> commandMap = new HashMap<String, Object>();
 	// 명령어와 명령어 처리 클래스를 저장
 	// 명령어와 처리 클래스 매핑 되어있는 properties파일 읽어서 map객체에 저장
 	// 명령어와 처리 클래스 매핑 되어있는 properties파일은 CommandPro.properties
@@ -32,7 +33,7 @@ public class ControllerAction extends HttpServlet{
 				}
 			}
 		}
-		Iterator keyIter = pr.keySet().iterator();
+		Iterator<Object> keyIter = pr.keySet().iterator();
 		//iterator 객체는 enumeration 객체를 확장시킨 객체.. 더 좋은거?
 		while(keyIter.hasNext()){
 			
@@ -40,7 +41,7 @@ public class ControllerAction extends HttpServlet{
 			
 			String className = pr.getProperty(command);
 			try{
-				Class commandClass = Class.forName(className);
+				Class<?> commandClass = Class.forName(className);
 				Object commandInstance = commandClass.newInstance();
 				commandMap.put(command, commandInstance);
 				//commandmap객체에 객체 저장

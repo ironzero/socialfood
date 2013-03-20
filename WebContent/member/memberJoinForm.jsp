@@ -5,8 +5,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>회원 가입</title>
-<script type="text/javascript" src="../js/script.js"></script>
-<link rel="stylesheet" href="../css/registerForm.css" type="text/css" />
+<script type="text/javascript" src="js/script.js"></script>
+<link rel="stylesheet" href="css/registerForm.css" type="text/css" />
 </head>
 <body>
 <form action="/socialfood/memberJoinAction.do" method="post" name="joinForm" onsubmit="return joinCheck()">

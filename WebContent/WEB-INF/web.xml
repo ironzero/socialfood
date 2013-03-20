@@ -6,7 +6,7 @@
 		<servlet-class>my.controller.ControllerAction</servlet-class>
 		<init-param>
 			<param-name>propertyConfig</param-name>
-			<param-value>D:\JAVA\Project\socialfood\WebContent\WEB-INF\CommandPro.properties</param-value>
+			<param-value>C:\Java\Project\Workspace\socialfood\WebContent\WEB-INF\CommandPro.properties</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>

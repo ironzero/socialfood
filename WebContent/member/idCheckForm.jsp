@@ -6,8 +6,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>ID 중복 확인</title>
-<link rel="stylesheet" href="../css/registerForm.css" type="text/css" />
-<script type="text/javascript" src="../js/script.js">
+<link rel="stylesheet" href="css/registerForm.css" type="text/css" />
+<script type="text/javascript" src="js/script.js">
 </script>
 <script>
 window.onload = function() {
