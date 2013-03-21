@@ -254,6 +254,11 @@ function deleteMember(member, colName, search) {
 		location.href="/socialfood/deleteMember.do?id=" + member + "&colName=" + colName + "&search=" + search;
 	}
 }
+function deleteAccount(member) {
+	if (confirm(member + "님 정말로 탈퇴를 하시겠습니까?")) {
+		location.href = "/socialfood/deleteAccount.do?id=" + member;
+	}
+}
 
 // my coupon list
 function myCoupon(member) {
