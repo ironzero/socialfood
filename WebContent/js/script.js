@@ -270,6 +270,11 @@ function updateMemberInfo(member) {
 	sub = window.open('updateMemberForm.do?id=' + member, 'sub', 'width=900, height=600');
 }
 
+// my Board list
+function myBoardList(member) {
+	sub = window.open('myBoardList.do?id=' + member, 'sub', 'width=900, height=600');
+}
+
 function updateConfirm() {
 	var ps1 = document.updateMemberForm.newPasswd1;
 	var ps2 = document.updateMemberForm.newPasswd2;
