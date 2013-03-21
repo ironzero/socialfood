@@ -177,6 +177,29 @@ function fill_select(f) {
 		document.writeln("<OPTION value=\"" + x + "\">" + x);
 	document.writeln("</SELECT>일");
 }
+function fill_select(f, year, month, date) {
+	document.writeln("<SELECT name=\"years\">");
+	for ( var x = 1900; x < 2030; x++) {
+		if (x == year)
+			document.writeln("<OPTION value=\"" + x + "\"selected>" + x);
+		document.writeln("<OPTION value=\"" + x + "\">" + x);
+	}
+	document.writeln("</SELECT>년");
+
+	document.writeln("<SELECT name=\"months\">");
+	for (x = 1; x <= 12; x++) {
+		if (x == month)
+			document.writeln("<OPTION value=\"" + x + "\"selected>" + x);
+		document.writeln("<OPTION value=\"" + x + "\">" + x);
+	}
+	document.writeln("</SELECT>월<SELECT name=\"days\">");
+	for (x = 1; x <= 31; x++) {
+		if (x == date)
+			document.writeln("<OPTION value=\"" + x + "\"selected>" + x);
+		document.writeln("<OPTION value=\"" + x + "\">" + x);
+	}
+	document.writeln("</SELECT>일");
+}
 
 // only number input
 function onlyNumberInput() {
@@ -237,3 +260,38 @@ function myCoupon(member) {
 	sub = window.open('myCouponList.do?id=' + member, 'sub', 'width=900, height=600');
 }
 
+// update Member Info
+function updateMemberInfo(member) {
+	sub = window.open('updateMemberForm.do?id=' + member, 'sub', 'width=900, height=600');
+}
+
+function updateConfirm() {
+	var ps1 = document.updateMemberForm.newPasswd1;
+	var ps2 = document.updateMemberForm.newPasswd2;
+	var db = document.updateMemberForm.dbPasswd;
+	var cps = document.updateMemberForm.currPasswd;
+	if (cps.value == "") {
+		alert("현재 패스워드를 입력하세요.");
+		return false;
+	}
+	if (ps1.value == "") {
+		db.value = cps.value;
+	} else if (ps1.value == ps2.value){
+		db.value = ps1.value;
+	} else if (ps1.value != ps2.value){
+		alert("수정할 패스워드를 다시 확인하세요.");
+		ps1.focus();
+		return false;
+	} 
+	if ((ps1.value != "" || ps2.value != "") && ps1.value.length < 4) {
+		alert("패스워드는 4자리 이상입니다.");
+		ps1.focus();
+		return false;
+	}
+	
+	if (confirm('수정하시겠습니까?')){
+		return true;
+	}
+	
+	return false;
+}

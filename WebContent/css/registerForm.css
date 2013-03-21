@@ -4,9 +4,9 @@ body {
 }
 table {
 	text-align: left;
-	width: 70%;
-	margin-left: 15%;
-	margin-right: 15%;
+	width: 60%;
+	margin-left: 20%;
+	margin-right: 20%;
 	border-color: #e3ebc3;
 	border-style: dashed;
 	border-width: medium;
@@ -35,6 +35,7 @@ table td.tag {
 	border-radius: 5px;
 	border-color: black;
 	text-align: center;
+	width: 20%;
 }
 
 table td {
@@ -58,4 +59,7 @@ table input {
 table td.info {
 	text-align: center;
 	color: #AA1111;
+}
+table td.memInfo {
+	padding-left: 1em;
 }

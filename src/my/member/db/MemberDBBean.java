@@ -127,6 +127,41 @@ public class MemberDBBean {
 		return false;
 	}
 	
+	public boolean checkPasswd(String id, String passwd) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement("select password from member where id=?");
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				if (passwd.equals(rs.getString(1))) {
+					return true;
+				} 
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+		}
+		return false;
+	}
+	
 	public List<MemberBean> getMemberList(int start, int end) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -158,6 +193,7 @@ public class MemberDBBean {
 					member.setReg_date(rs.getTimestamp("reg_date"));
 					member.setLast_login_ip(rs.getString("last_login_ip"));
 					member.setLast_login_time(rs.getTimestamp("last_login_time"));
+					member.setLv(rs.getInt("lv"));
 					
 					memberList.add(member);
 				} while (rs.next());
@@ -247,6 +283,7 @@ public class MemberDBBean {
 					member.setReg_date(rs.getTimestamp("reg_date"));
 					member.setLast_login_ip(rs.getString("last_login_ip"));
 					member.setLast_login_time(rs.getTimestamp("last_login_time"));
+					member.setLv(rs.getInt("lv"));
 					
 					memberList.add(member);
 				} while (rs.next());
@@ -340,5 +377,95 @@ public class MemberDBBean {
 			}
 		}
 	}
+	
+	public MemberBean getMemberInfo(String id) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		MemberBean member = null;
+		
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement("select * from member where id=?");
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				member = new MemberBean();
+				member.setId(id);
+				member.setPasswd(rs.getString("password"));
+				member.setName(rs.getString("name"));
+				member.setBirth_date(rs.getDate("birth_date"));
+				member.setEmail(rs.getString("email"));
+				member.setLast_login_time(rs.getTimestamp("last_login_time"));
+				member.setPhone(rs.getString("phone"));
+				member.setLocate(rs.getString("locate"));
+				member.setNickname(rs.getString("nickname"));
+				member.setReg_date(rs.getTimestamp("reg_date"));
+				member.setLast_login_ip(rs.getString("last_login_ip"));
+				member.setPoint(rs.getInt("point"));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+		}
+		
+		return member;
+	}
+	
+	
+	public boolean updateMember(MemberBean member) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		boolean result = false;
+		
+		try {
+			conn = getConnection();
+			
+			pstmt = conn.prepareStatement("update member set password=?, email=?, phone=?, birth_date=?, locate=? where id=?");
+			pstmt.setString(1, member.getPasswd());
+			pstmt.setString(2, member.getEmail());
+			pstmt.setString(3, member.getPhone());
+			pstmt.setDate(4, member.getBirth_date());
+			pstmt.setString(5, member.getLocate());
+			pstmt.setString(6, member.getId());
+			pstmt.executeUpdate();
+			
+			result = true;
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+		}
+		
+		return result;
+	}
+	
 	
 }

@@ -121,7 +121,7 @@ $(function() {
 					<td align="center" width="200"><a href="mailto:${member.email}">${member.email}</a></td>
 					<td align="center" width="200">${member.last_login_time}</td>
 					<td align="center" width="200">${member.last_login_ip}</td>
-					<td align="center" width="200">0</td>
+					<td align="center" width="200">${member.lv}</td>
 				</tr>
 				<tr class="ac">
 					<td align="right" colspan="7">

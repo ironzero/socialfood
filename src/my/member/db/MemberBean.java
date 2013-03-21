@@ -15,6 +15,7 @@ public class MemberBean {
 	private Timestamp last_login_time;
 	private String last_login_ip;
 	private int point;
+	private int lv;
 	
 	
 	public Timestamp getLast_login_time() {
@@ -88,6 +89,12 @@ public class MemberBean {
 	}
 	public void setLocate(String locate) {
 		this.locate = locate;
+	}
+	public int getLv() {
+		return lv;
+	}
+	public void setLv(int lv) {
+		this.lv = lv;
 	}
 	
 	

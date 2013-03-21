@@ -17,7 +17,6 @@ public class MemberJoinAction implements CommandAction {
 		String year = request.getParameter("years");
 		String month = request.getParameter("months");
 		String day = request.getParameter("days");
-		System.out.println(month);
 		String date = year + "-" + month + "-" + day;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		java.sql.Date birth = new java.sql.Date(format.parse(date).getTime());
