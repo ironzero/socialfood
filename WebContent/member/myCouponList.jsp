@@ -56,13 +56,13 @@
 			<c:set var="endPage" value="${pageCount}" />
 		</c:if>
 		<c:if test="${startPage > 10}">
-			<a href="/socialfood/myCouponList.do?pageNum=${startPage - 10}">[이전]</a>
+			<a href="/socialfood/myCouponList.do?id=${id}&pageNum=${startPage - 10}">[이전]</a>
 		</c:if>
 		<c:forEach var="i" begin="${startPage}" end="${endPage}">
-			<a href="/socialfood/myCouponList.do?pageNum=${i}">[${i}]</a>
+			<a href="/socialfood/myCouponList.do?id=${id}&pageNum=${i}">[${i}]</a>
 		</c:forEach>
 		<c:if test="${endPage < pageCount }">
-			<a href="/socialfood/myCouponList.do?pageNum=${startPage + 10}">[다음]</a>
+			<a href="/socialfood/myCouponList.do?id=${id}&pageNum=${startPage + 10}">[다음]</a>
 		</c:if>
 	</c:if>
 	<br />
