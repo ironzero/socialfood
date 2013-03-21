@@ -2,29 +2,29 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ include file="../view/color.jspf"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>게시판</title>
-<link rel="stylesheet" href="../style.css" type="text/css" />
-<script type="text/javascript" src="../script.js"></script>
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<script type="text/javascript" src="js/script.js"></script>
 </head>
 <body bgcolor="${bodyback_c }">
-	<center>
-	<table width="800">
+	<table width="800" align="center">
 		<tr>
 			<td align="right">
 				검색결과 (전체 글:${count}건)</td>
 		</tr>
 	</table>
 	<c:if test="${count==0 }">
-		<table width="800" border="0" cellpadding="0" cellspacing="0">
+		<table width="800" border="0" cellpadding="0" cellspacing="0" align="center">
 			<tr>
 				<td align="center">게시판에 검색된 글이 없습니다.</td>
 			</tr>
 		</table>
 	</c:if>
 	<c:if test="${count>0 }">
-		<table border="0" width="800" cellpadding="0" cellsapcing="0"
+		<table border="0" width="800" cellpadding="0" cellspacing="0"
 			align="center">
 			<tr height="30" bgcolor="${value_c }">
 				<td align="center" width="50">번 호</td>
@@ -47,7 +47,7 @@
 						<c:if test="${article.depth ==0 }">
 						<img src="images/level.gif" width="${5*article.depth}"height="16">
 						</c:if>
-						[${article.category}] <a href="/socialfood/content.do?idx=${article.idx }&pageNum=${currentPage}">
+						[${article.category}] <a href="/socialfood/board/content.do?idx=${article.idx }&pageNum=${currentPage}">
 							 ${article.title } </a>
 						<c:if test="${article.read_count>=20 }">
 							<img src="images/hot.gif" border="0" height="16" />
@@ -72,21 +72,21 @@
 			<c:set var="endPage" value="${pageCount }" />
 		</c:if>
 		<c:if test="${startPage > 10 }">
-			<a href="/socialfood/search.do?pageNum=${startPage-10 }">[이전]</a>
+			<a href="/socialfood/board/search.do?pageNum=${startPage-10 }">[이전]</a>
 		</c:if>
 		<c:forEach var="i" begin="${startPage }" end="${endPage }">
-			<a href="/socialfood/search.do?pageNum=${i }">${i }</a>
+			<a href="/socialfood/board/search.do?pageNum=${i }">${i }</a>
 		</c:forEach>
 		<c:if test="${endPage < pageCount }">
-			<a href="/socialfood/search.do?pageNum=${startPage + 10 }">[다음]</a>
+			<a href="/socialfood/board/search.do?pageNum=${startPage + 10 }">[다음]</a>
 		</c:if>
 	</c:if>
 	<br />
-	<form action="/socialfood/search.do?pageNum=1&search=${search}&val=${val}" name="findForm">
-		<table width="800" border="0" cellpadding="0" cellspacing="0">
+	<form action="/socialfood/board/search.do?pageNum=1&search=${search}&val=${val}" name="findForm">
+		<table width="800" border="0" cellpadding="0" cellspacing="0" align="center">
 			<tr>
 			<td align="left">
-			<input type="button" onclick="document.location.href='/socialfood/writeForm.do'" value="글쓰기">	
+			<input type="button" onclick="document.location.href='/socialfood/board/writeForm.do'" value="글쓰기">	
 			</td>
 				<td align="right">
 					<select name="search">
@@ -100,8 +100,8 @@
 					<input type="submit" value="찾기">
 				</td>
 			</tr>
+		</table>
 		</form>
-	</center>
-	</table>
+			
 </body>
 </html>

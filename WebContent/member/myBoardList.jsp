@@ -7,10 +7,92 @@
 <html>
 <head>
 <title>게시판</title>
-<link rel="stylesheet" href="css/style.css" type="text/css" />
-<script type="text/javascript"
- 
- src="script.js"></script>
+<style type="text/css">
+.btn-bordok {
+	background-color: #6B66FF;
+	cursor: pointer;
+	height: 23px;
+	width: 62px;
+	border: none;
+}
+
+.btn-bordcancel {
+	background-color: #FF3636;
+	cursor: pointer;
+	height: 23px;
+	width: 62px;
+	border: none;
+}
+table {
+    border-collapse: collapse;
+    width: 40em;
+    border: 2px solid #ddd;
+}
+
+th, td{
+    padding: 0.1em 1em;
+    font: 9pt sans-serif;
+}
+
+caption{
+    font: bold 1.2em sans-serif;
+    margin: 1em 0;
+}
+
+col{
+    border-right: 1px solid #ccc;
+}
+col#album{
+    border: none;
+}
+
+thead{
+    background-color: #ddd;
+    border-top: 1px solid #a5a5a5;
+    border-bottom: 1px solid #a5a5a5;
+}
+
+th{
+    font-weight: normal;
+    text-align: center;
+}
+
+#artistNumHead{
+    text-indent: -1000em;
+}
+
+.odd{
+    background-color:#edf5ff;
+}
+
+tr:hover{
+    background-color: #3d80df;
+    color: #fff;
+}
+
+thead tr:hover, tfoot tr:hover{
+    background-color: transparent;
+    color: inherit;
+}
+
+thead td{
+    border-right: 1px solid #EEE;
+}
+
+A:link {
+	COLOR: #374273; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #374273; TEXT-DECORATION: none
+}
+
+
+INPUT,TEXTAREA {border:expression('1px solid #7f9db9');} 
+
+
+@import url('demo.css');
+@import url('font-awesome.css');
+</style>
 </head>
 <body bgcolor="${bodyback_c}">
 	<table width="800" align="center">
@@ -41,7 +123,8 @@
 			<c:forEach var="article" items="${articleList}">
 				<tr height="30">
 					<td align="center" width="50">
-						<c:out value="${article.idx}" /> 
+						<c:out value="${number}" /> 
+						<c:set var="number" value="${number - 1}" />
 					<td width="350">
 						<c:if test="${article.depth > 0}">
 						<img src="images/level.gif" width="${5*article.depth}" height="16">
@@ -50,8 +133,8 @@
 						<c:if test="${article.depth == 0}">
 						<img src="images/level.gif" width="${5*article.depth}"height="16">
 						</c:if>
-						[${article.category}] <a href="/socialfood/content.do?idx=${article.idx}&pageNum=${currentPage}">
-							 ${article.title}</a>
+						[${article.category}] 
+							 ${article.title}
 						<c:if test="${article.read_count>=20}">
 							<img src="images/hot.gif" border="0" height="16" />
 						</c:if>

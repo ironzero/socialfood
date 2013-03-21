@@ -30,24 +30,26 @@ public class BoardDBBean {
 		int ref = article.getRef();
 		int step = article.getStep();
 		int depth = article.getDepth();
+		int area = article.getArea();
+		String area_seq = "board_area_"+ area +"_idx_seq.nextval";
+		String sql_PK_currval = "select board_idx_seq.currval from dual";
+		StringBuilder sql_sb = new StringBuilder("select max(idx) from board ");
 		String sql = "";
 		try{
 			conn = getConnection();
-			pstmt = conn.prepareStatement("select max(idx) from board where area=1");// max(area_idx)
+			pstmt = conn.prepareStatement(sql_sb.toString());// max(area_idx)
 			rs = pstmt.executeQuery();
 			if(rs.next()){
-				System.out.println("max(idx) = "+rs.getInt(1));
 				pk = rs.getInt(1)+1;
 			}else
 				pk = 1;
-			
 			if(idx!=0){//답글일 때 기존 답글을 아래로 민다.
-				sql = "update board set step=step+1 where ref=? and step>? and area=1";
+				sql_sb.replace(0, sql_sb.length()," update board set step=step+1 where ref=? and step>? and area=?");
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setInt(1, ref);
 				pstmt.setInt(2, step);
+				pstmt.setInt(3, area);
 				int howMany = pstmt.executeUpdate();
-				System.out.println("뒤로 밀리는  기존 답글은 몇 개? "+howMany);
 				step = step+1;
 				depth = depth+1;
 				
@@ -56,22 +58,32 @@ public class BoardDBBean {
 				step = 0;
 				depth= 0;
 			}
-			sql = "insert into board (idx, title, wdate, content, category, area," +
-					" area_idx,  ref, depth, step, nickname, id) values( board_idx_seq.nextval, " +
-					"?,?,?,?,?,board_area_1_idx_seq.nextval,?,?,?,?,?)";
-			pstmt = conn.prepareStatement(sql);
+			sql_sb.replace(0, sql_sb.length(), " insert into board (idx, " );
+			sql_sb.append( "title, wdate, content, category, area, area_idx, ");
+			sql_sb.append( "ref, depth, step, id, nickname)");
+			// 열의 값들
+			sql_sb.append( " values( board_idx_seq.nextval");	//idx
+			sql_sb.append( " ,?,?,?,?,?, " + area_seq + " ,?,?,?,?,?)");
+			pstmt = conn.prepareStatement(sql_sb.toString());
 			pstmt.setString(1, article.getTitle());
 			pstmt.setTimestamp(2, article.getWdate());
 			pstmt.setString(3, article.getContent());
 			pstmt.setString(4, article.getCategory());
-			pstmt.setInt(5, article.getArea());
+			pstmt.setInt(5, area);
 			pstmt.setInt(6, ref);
 			pstmt.setInt(7, depth);
 			pstmt.setInt(8, step);
-			pstmt.setString(9, article.getNickname());
-			pstmt.setString(10, article.getId());
+			pstmt.setString(9, article.getId());
+			pstmt.setString(10, article.getNickname());
 
-			if( pstmt.executeUpdate() != 1 )
+			int r = pstmt.executeUpdate();
+			//System.out.println("인서트 성공여부 0 or 1 : "+r);
+			pstmt = conn.prepareStatement(sql_PK_currval );
+			rs = pstmt.executeQuery();
+			rs.next();
+			pk = rs.getInt(1);
+		
+			if( r != 1 )
 				pk = 0;
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -97,7 +109,7 @@ public class BoardDBBean {
 				result = rs.getInt(1);
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticlecount : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -130,11 +142,10 @@ public class BoardDBBean {
 			pstmt.executeUpdate();
 		
 			sql = "select a.* from (select ROWNUM as RNUM, b.* from (select * from board" +
-			" where area=? order by idx desc) b order by ref desc, step asc) a where a.RNUM >=? and a.RNUM <=?";
+					" order by idx desc) b order by ref desc, step asc) a where a.RNUM >=? and a.RNUM <=?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, area);
-			pstmt.setInt(2, start);
-			pstmt.setInt(3, end);
+			pstmt.setInt(1, start);
+			pstmt.setInt(2, end);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				articleList = new ArrayList(end);
@@ -211,10 +222,9 @@ public class BoardDBBean {
 				article.setRecommand_count(rs.getInt("recommand_count"));
 				article.setRecommand(rs.getInt("recommand"));
 				article.setNon_recommand(rs.getInt("non_recommand"));
-			
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticleList : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -247,6 +257,19 @@ public class BoardDBBean {
 			pstmt.executeUpdate();
 		}catch(Exception ex){
 			System.out.println("boardDBBean CommandPlus : " + ex);
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	
@@ -265,6 +288,19 @@ public class BoardDBBean {
 			pstmt.executeUpdate();
 		}catch(Exception ex){
 			System.out.println("boardDBBean CommandPlus : " + ex);
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	/*게시글 수정*/
@@ -283,7 +319,20 @@ public class BoardDBBean {
 			pstmt.setInt(3, idx);
 			pstmt.executeUpdate();
 		}catch(Exception ex){
-			System.out.println("boardDBBean updateArticle : " + ex);
+			ex.printStackTrace();
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	/*게시글 삭제*/
@@ -299,7 +348,7 @@ public class BoardDBBean {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
-			sql = "delete from fileupload where idx=?";
+			sql = "delete from boardfile where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
@@ -309,7 +358,20 @@ public class BoardDBBean {
 			pstmt.executeUpdate();
 			
 		}catch(Exception ex){
-			System.out.println("boardDBBean updateArticle : " + ex);
+			ex.printStackTrace();
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	
@@ -321,7 +383,6 @@ public class BoardDBBean {
 		int x = 0;
 		try{
 			conn = getConnection();
-			val = new String(val.getBytes("iso_8859-1"),"utf-8");
 			String sql = "select count(*) from board where "+search+" like '%"+val+"%' and area="+area;
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -329,7 +390,7 @@ public class BoardDBBean {
 				x = rs.getInt(1);
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getSearcharticlecount : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -353,7 +414,7 @@ public class BoardDBBean {
 		List<BoardDataBean> articleList = null;
 		try{
 			conn = getConnection();
-			val = new String(val.getBytes("iso_8859-1"),"utf-8");
+//			val = new String(val.getBytes("iso_8859-1"),"utf-8");
 			String sql = "select * from (select ROWNUM as RNUM, b.* from (select * from board" +
 					" where area="+area+" and "+search+" like '%"+val+"%'"+" order by ref desc, step asc) b) a " +
 					"where RNUM >="+start+" and RNUM <="+end;
@@ -401,15 +462,14 @@ public class BoardDBBean {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "insert into fileupload values(fileupload_fileid_seq.nextval,?,?,?,?)";
+		String sql = "insert into boardfile values(boardfile_fileid_seq.nextval,?,?,?)";
 		
 		try {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, file.getFilename());
 			pstmt.setLong(2, file.getFilesize());
-			pstmt.setInt(3, file.getFilestep());
-			pstmt.setInt(4, file.getIdx());
+			pstmt.setInt(3, file.getIdx());
 			pstmt.executeUpdate();
 				
 		} catch (SQLException e) {
@@ -430,7 +490,7 @@ public class BoardDBBean {
 		int r = 0;
 		try{
 			conn = getConnection();
-			sql = "delete from fileupload where fileid=?";
+			sql = "delete from boardfile where fileid=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, fileid);
 			r = pstmt.executeUpdate();
@@ -453,7 +513,7 @@ public class BoardDBBean {
 		String fileTmp = "";
 		try{
 			conn = getConnection();
-			sql = "select * from fileupload where idx=?";
+			sql = "select * from boardfile where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
@@ -491,7 +551,7 @@ public class BoardDBBean {
 		String fileTmp = "";
 		try{
 			conn = getConnection();
-			sql = "select * from fileupload where idx=?";
+			sql = "select * from boardfile where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
@@ -505,7 +565,7 @@ public class BoardDBBean {
 						filename=st.nextToken();
 					}
 					fileBean.setFilename(filename);
-					fileBean.setRealpath("upload/"+filename);
+					fileBean.setRealpath("../upload/"+filename);
 					fileBean.setFilesize(rs.getLong("filesize"));
 					fileList.add(fileBean);
 				}
@@ -520,6 +580,7 @@ public class BoardDBBean {
 		}
 		return fileList;
 	}
+	/*
 	public int getIdxNum() throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -543,7 +604,7 @@ public class BoardDBBean {
 		}
 		return x;
 	}
-	
+	*/
 	public int getFileCount(int idx) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -558,7 +619,7 @@ public class BoardDBBean {
 				result = rs.getInt(1);
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticlecount : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -641,6 +702,7 @@ public class BoardDBBean {
 		}
 	return commList;
 	}
+	
 	public void insertCommentary(BoardDataBean article) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -652,7 +714,7 @@ public class BoardDBBean {
 				sql = "insert into boardcommentary(num,nickname,content,wdate,idx) values" +
 						"(boardcommentary_num_seq.nextval,?,?,?,?)";
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, "tester1");
+				pstmt.setString(1, article.getComm_nickname());
 				pstmt.setString(2, article.getComm_content());
 				pstmt.setTimestamp(3, article.getComm_wdate());
 				pstmt.setInt(4, article.getComm_idx());

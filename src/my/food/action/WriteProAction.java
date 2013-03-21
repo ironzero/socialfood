@@ -9,7 +9,7 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.*;
 
 import my.action.*;
-import my.board.db.*;
+import my.food.db.*;
 
 public class WriteProAction implements CommandAction{
 	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable{
@@ -17,12 +17,12 @@ public class WriteProAction implements CommandAction{
 		String upDir = "D:\\JAVA\\Project\\socialfood\\WebContent\\upload\\";
 		int limitSize = 3 * 1024 * 1024;
 		MultipartRequest multi = new MultipartRequest(request,upDir,limitSize,"utf-8",new DefaultFileRenamePolicy());
-		BoardDataBean article = new BoardDataBean();
-		BoardDBBean dbPro = BoardDBBean.getInstance();
+		FoodDataBean article = new FoodDataBean();
+		FoodDBBean dbPro = FoodDBBean.getInstance();
 		
 			String oriFileName =  multi.getOriginalFileName("filename");
 			if(oriFileName != null){
-				BoardFileBean fileBean = new BoardFileBean();
+				FoodFileBean fileBean = new FoodFileBean();
 				String fileName = multi.getFilesystemName("filename");
 				File file= multi.getFile("filename");
 				String fileFullName = upDir + fileName;	
@@ -44,6 +44,6 @@ public class WriteProAction implements CommandAction{
 		article.setDepth(Integer.parseInt(multi.getParameter("depth")));
 		article.setId(multi.getParameter("id"));
 		dbPro.insertArticle(article);
-		return "food/writePro.jsp";
+		return "writePro.jsp";
 	}
 }

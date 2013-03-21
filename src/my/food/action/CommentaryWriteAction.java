@@ -5,13 +5,12 @@ import java.sql.*;
 import javax.servlet.http.*;
 
 import my.action.*;
-import my.board.db.*;
-
+import my.food.db.*;
 public class CommentaryWriteAction implements CommandAction{
 	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable{
 		request.setCharacterEncoding("utf-8");
-		BoardDataBean article = new BoardDataBean();
-		BoardDBBean dbPro = BoardDBBean.getInstance();
+		FoodDataBean article = new FoodDataBean();
+		FoodDBBean dbPro = FoodDBBean.getInstance();
 		String idtmp= request.getParameter("idx");
 		int idx = Integer.parseInt(idtmp);
 		int pageNum = Integer.parseInt(request.getParameter("pageNum"));
@@ -23,6 +22,6 @@ public class CommentaryWriteAction implements CommandAction{
 		dbPro.insertCommentary(article);
 		request.setAttribute("pageNum", pageNum);
 		request.setAttribute("idx", idx);
-		return "food/content.do?idx="+idx+"&pageNum="+pageNum;
+		return "content.do?idx="+idx+"&pageNum="+pageNum;
 	}
 }

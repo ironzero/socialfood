@@ -10,8 +10,16 @@ public class ListAction implements CommandAction{
 	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable{
 		request.setCharacterEncoding("utf-8");
 		String pageNum = request.getParameter("pageNum");
-		//int area = Integer.parseInt(request.getParameter("area"));
-		int area=1;
+		HttpSession session = request.getSession();
+		int area = 1;
+		if( request.getParameter("area") != null){
+			//area = Integer.parseInt(request.getParameter("area"));	
+			area = 1;
+		} else {
+			//area = (int) session.getAttribute("area");// null ?
+			area = 1;
+		}
+		session.setAttribute("area", area);
 		if(pageNum == null){
 			pageNum = "1";
 		}
@@ -39,6 +47,6 @@ public class ListAction implements CommandAction{
 		request.setAttribute("number", new Integer(number));
 		request.setAttribute("area", new Integer(area));
 		request.setAttribute("articleList", articleList);
-		return "board/list.jsp";
+		return "list.jsp";
 	}
 }

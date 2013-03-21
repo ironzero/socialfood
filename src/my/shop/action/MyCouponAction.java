@@ -25,7 +25,7 @@ public class MyCouponAction implements CommandAction {
 		int endRow = currentPage * pageSize;
 		int count = 0;
 		int number= 0;
-		List<CouponBean> couponList = null;
+		List<ShopDataBean> couponList = null;
 		ShopDBBean dbPro = ShopDBBean.getInstance();
 		count = dbPro.getCouponCount(id);
 		

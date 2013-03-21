@@ -14,7 +14,7 @@ public class DeleteProAction implements CommandAction{
 		dbPro.deleteArticle(idx);
 		request.setAttribute("pageNum", request.getParameter("pageNum"));
 		
-		return "board/deletePro.jsp";
+		return "deletePro.jsp";
 		
 	}
 }

@@ -7,12 +7,12 @@ import javax.naming.*;
 import javax.sql.*;
 
 
-public class BoardDBBean {
-	private static BoardDBBean instance = new BoardDBBean();
-	public static BoardDBBean getInstance(){
+public class FoodDBBean {
+	public static FoodDBBean instance = new FoodDBBean();
+	public static FoodDBBean getInstance(){
 		return instance;
 	}
-	private BoardDBBean(){
+	private FoodDBBean(){
 		
 	}
 	private Connection getConnection() throws Exception{
@@ -21,7 +21,7 @@ public class BoardDBBean {
 		DataSource ds = (DataSource)envCtx.lookup("jdbc/oracle");
 		return ds.getConnection();
 	}
-	public int insertArticle(BoardDataBean article) {
+	public int insertArticle(FoodDataBean article) {
 		int pk = 0;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -30,10 +30,11 @@ public class BoardDBBean {
 		int ref = article.getRef();
 		int step = article.getStep();
 		int depth = article.getDepth();
+		int area = article.getArea();
 		String sql = "";
 		try{
 			conn = getConnection();
-			pstmt = conn.prepareStatement("select max(idx) from board where area=1");// max(area_idx)
+			pstmt = conn.prepareStatement("select max(idx) from food where area=1");// max(area_idx)
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				System.out.println("max(idx) = "+rs.getInt(1));
@@ -42,10 +43,11 @@ public class BoardDBBean {
 				pk = 1;
 			
 			if(idx!=0){//답글일 때 기존 답글을 아래로 민다.
-				sql = "update board set step=step+1 where ref=? and step>? and area=1";
+				sql = "update food set step=step+1 where ref=? and step>? and area=?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setInt(1, ref);
 				pstmt.setInt(2, step);
+				pstmt.setInt(3, area);
 				int howMany = pstmt.executeUpdate();
 				System.out.println("뒤로 밀리는  기존 답글은 몇 개? "+howMany);
 				step = step+1;
@@ -56,9 +58,9 @@ public class BoardDBBean {
 				step = 0;
 				depth= 0;
 			}
-			sql = "insert into board (idx, title, wdate, content, category, area," +
+			sql = "insert into food (idx, title, wdate, content, category, area," +
 					" area_idx,  ref, depth, step, nickname, id) values( board_idx_seq.nextval, " +
-					"?,?,?,?,?,board_area_1_idx_seq.nextval,?,?,?,?,?)";
+					"?,?,?,?,?,board_area_"+area+"_idx_seq.nextval,?,?,?,?,?)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, article.getTitle());
 			pstmt.setTimestamp(2, article.getWdate());
@@ -83,21 +85,20 @@ public class BoardDBBean {
 		return pk;
 	}
 	
-	public int getArticleCount(int area) throws Exception{
+	public int getArticleCount() throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs =null;
 		int result = 0;
 		try{
 			conn = getConnection();
-			pstmt = conn.prepareStatement("select count(*) from board where area=?");
-			pstmt.setInt(1, area);
+			pstmt = conn.prepareStatement("select count(*) from food");
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				result = rs.getInt(1);
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticlecount : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -116,30 +117,28 @@ public class BoardDBBean {
 	}
 	
 	/*리스트 불러오기*/
-	public List getarticleList(int start, int end, int area) throws Exception{
+	public List<FoodDataBean> getArticleList(int start, int end) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List articleList = null;
+		List<FoodDataBean> articleList = null;
 		String sql  = "";
 		try{
 			conn = getConnection();
 			/*추천지수 불러오는sql*/
-			sql = "update board set recommand_count = recommand - non_recommand ";
+			sql = "update food set recommand_count = recommand - non_recommand ";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.executeUpdate();
-		
-			sql = "select a.* from (select ROWNUM as RNUM, b.* from (select * from board" +
-			" where area=? order by idx desc) b order by ref desc, step asc) a where a.RNUM >=? and a.RNUM <=?";
+			sql = "select a.* from (select ROWNUM as RNUM, b.* from (select * from food" +
+			" order by idx desc) b order by ref desc, step asc) a where a.RNUM >=? and a.RNUM <=?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, area);
-			pstmt.setInt(2, start);
-			pstmt.setInt(3, end);
+			pstmt.setInt(1, start);
+			pstmt.setInt(2, end);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
-				articleList = new ArrayList(end);
+				articleList = new ArrayList<FoodDataBean>(end);
 				do{
-					BoardDataBean article = new BoardDataBean();
+					FoodDataBean article = new FoodDataBean();
 					article.setIdx(rs.getInt("idx"));
 					article.setArea_idx(rs.getInt("area_idx"));
 					article.setTitle(rs.getString("title"));
@@ -154,12 +153,11 @@ public class BoardDBBean {
 					article.setCategory(rs.getString("category"));
 					article.setDepth(rs.getInt("depth"));
 					articleList.add(article);
-					
 				}
 				while(rs.next());
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticleList : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -175,28 +173,27 @@ public class BoardDBBean {
 			}
 		}
 		return articleList;
-		
 	}
 	
 	/*게시글 내용받아오기*/
-	public BoardDataBean getArticle(int idx) throws Exception{
+	public FoodDataBean getArticle(int idx) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		BoardDataBean article = null;
+		FoodDataBean article = null;
 		String sql="";
 		try{
 			conn = getConnection();
-			sql = "update board set read_count = read_count + 1 where idx=?";
+			sql = "update food set read_count = read_count + 1 where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
-			sql = "select * from board where idx=?";
+			sql = "select * from food where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
-				article = new BoardDataBean();
+				article = new FoodDataBean();
 				article.setArea_idx(rs.getInt("area_idx"));
 				article.setIdx(rs.getInt("idx"));
 				article.setNickname(rs.getString("nickname"));
@@ -214,7 +211,7 @@ public class BoardDBBean {
 			
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticleList : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -237,16 +234,28 @@ public class BoardDBBean {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		BoardDataBean article = null;
 		String sql="";
 		try{
 			conn = getConnection();
-			sql = "update board set recommand = recommand + 1 where idx=?";
+			sql = "update food set recommand = recommand + 1 where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
 		}catch(Exception ex){
-			System.out.println("boardDBBean CommandPlus : " + ex);
+			ex.printStackTrace();
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	
@@ -255,16 +264,28 @@ public class BoardDBBean {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		BoardDataBean article = null;
 		String sql="";
 		try{
 			conn = getConnection();
-			sql = "update board set non_recommand = non_recommand + 1 where idx=?";
+			sql = "update food set non_recommand = non_recommand + 1 where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
 		}catch(Exception ex){
-			System.out.println("boardDBBean CommandPlus : " + ex);
+			ex.printStackTrace();
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	/*게시글 수정*/
@@ -272,44 +293,63 @@ public class BoardDBBean {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		BoardDataBean article = null;
 		String sql="";
 		try{
 			conn = getConnection();
-			sql = "update board set title=?, content=? where idx=?";
+			sql = "update food set title=?, content=? where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, title);
 			pstmt.setString(2, content);
 			pstmt.setInt(3, idx);
 			pstmt.executeUpdate();
 		}catch(Exception ex){
-			System.out.println("boardDBBean updateArticle : " + ex);
+			ex.printStackTrace();
+		}finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	/*게시글 삭제*/
 	public void deleteArticle(int idx) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		BoardDataBean article = null;
 		String sql="";
 		try{
 			conn = getConnection();
-			sql = "delete from boardcommentary where idx=?";
+			sql = "delete from foodcommentary where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
-			sql = "delete from fileupload where idx=?";
+			sql = "delete from foodfile where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
-			sql = "delete from board where idx=?";
+			sql = "delete from food where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			pstmt.executeUpdate();
 			
 		}catch(Exception ex){
-			System.out.println("boardDBBean updateArticle : " + ex);
+			ex.printStackTrace();
+		}finally{
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
 		}
 	}
 	
@@ -322,14 +362,14 @@ public class BoardDBBean {
 		try{
 			conn = getConnection();
 			val = new String(val.getBytes("iso_8859-1"),"utf-8");
-			String sql = "select count(*) from board where "+search+" like '%"+val+"%' and area="+area;
+			String sql = "select count(*) from food where "+search+" like '%"+val+"%' and area="+area;
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			if(rs.next()){
 				x = rs.getInt(1);
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getSearcharticlecount : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -346,24 +386,23 @@ public class BoardDBBean {
 		}
 		return x;
 	}
-	public List getSearchArticles(int start, int end,String search, String val, int area) throws Exception{
+	public List<FoodDataBean> getSearchArticles(int start, int end,String search, String val, int area) throws Exception{
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
-		List<BoardDataBean> articleList = null;
+		List<FoodDataBean> articleList = null;
 		try{
 			conn = getConnection();
 			val = new String(val.getBytes("iso_8859-1"),"utf-8");
-			String sql = "select * from (select ROWNUM as RNUM, b.* from (select * from board" +
+			String sql = "select * from (select ROWNUM as RNUM, b.* from (select * from food" +
 					" where area="+area+" and "+search+" like '%"+val+"%'"+" order by ref desc, step asc) b) a " +
 					"where RNUM >="+start+" and RNUM <="+end;
-			System.out.println(sql);
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			if(rs.next()){
-				articleList = new ArrayList(end);
+				articleList = new ArrayList<FoodDataBean>(end);
 				do{
-					BoardDataBean article = new BoardDataBean();
+					FoodDataBean article = new FoodDataBean();
 					article.setIdx(rs.getInt("idx"));
 					article.setArea_idx(rs.getInt("area_idx"));
 					article.setTitle(rs.getString("title"));
@@ -380,7 +419,7 @@ public class BoardDBBean {
 				}while(rs.next());
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getSearcharticles : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -397,11 +436,11 @@ public class BoardDBBean {
 		}
 		return articleList;
 	}
-	public void saveFile(BoardFileBean file)  throws Exception{
+	public void saveFile(FoodFileBean file)  throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "insert into fileupload values(fileupload_fileid_seq.nextval,?,?,?,?)";
+		String sql = "insert into foodfile values(foodfile_fileid_seq.nextval,?,?,?,?)";
 		
 		try {
 			conn = getConnection();
@@ -430,7 +469,7 @@ public class BoardDBBean {
 		int r = 0;
 		try{
 			conn = getConnection();
-			sql = "delete from fileupload where fileid=?";
+			sql = "delete from foodfile where fileid=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, fileid);
 			r = pstmt.executeUpdate();
@@ -443,21 +482,21 @@ public class BoardDBBean {
 		}
 		return r;
 	}
-	public BoardFileBean getFileName(int idx) throws Exception{
+	public FoodFileBean getFileName(int idx) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		BoardFileBean fileBean = null;
+		FoodFileBean fileBean = null;
 		String sql = "";
 		String filename = "";
 		String fileTmp = "";
 		try{
 			conn = getConnection();
-			sql = "select * from fileupload where idx=?";
+			sql = "select * from foodfile where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
-			fileBean = new BoardFileBean();
+			fileBean = new FoodFileBean();
 			if(rs.next()){
 				fileBean.setFileid(rs.getInt("fileid"));
 				fileTmp = rs.getString("filename");
@@ -480,25 +519,25 @@ public class BoardDBBean {
 		}
 		return fileBean;
 	}
-	public List getFileList(int idx) throws Exception{
+	public List<FoodFileBean> getFileList(int idx) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		BoardFileBean fileBean = null;
+		FoodFileBean fileBean = null;
 		String sql = "";
-		List fileList = null;
+		List<FoodFileBean> fileList = null;
 		String filename = "";
 		String fileTmp = "";
 		try{
 			conn = getConnection();
-			sql = "select * from fileupload where idx=?";
+			sql = "select * from foodfile where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
-			fileList = new ArrayList(5);
+			fileList = new ArrayList<FoodFileBean>(5);
 			if(rs.next()){
 				do{
-					fileBean = new BoardFileBean();
+					fileBean = new FoodFileBean();
 					fileTmp = rs.getString("filename");
 					StringTokenizer st = new StringTokenizer(fileTmp,"\\");
 					while(st.hasMoreElements()){
@@ -527,7 +566,7 @@ public class BoardDBBean {
 		int x = 0;
 		try{
 			conn=getConnection();
-			String sql = "select max(idx) from board";
+			String sql = "select max(idx) from food";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
@@ -551,14 +590,14 @@ public class BoardDBBean {
 		int result = 0;
 		try{
 			conn = getConnection();
-			pstmt = conn.prepareStatement("select count(*) from board where idx=?");
+			pstmt = conn.prepareStatement("select count(*) from food where idx=?");
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				result = rs.getInt(1);
 			}
 		}catch(Exception ex){
-			System.out.println("boardDBBean getarticlecount : " + ex);
+			ex.printStackTrace();
 		}finally{
 			if(rs != null){
 				try{rs.close();}
@@ -583,7 +622,7 @@ public class BoardDBBean {
 		String sql = "";
 		try{
 			conn = getConnection();
-			sql = "select count(*) from boardcommentary where idx=?";
+			sql = "select count(*) from foodcommentary where idx=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
@@ -608,23 +647,23 @@ public class BoardDBBean {
 		}
 		return result;
 	}
-	public List getBoardCommentaryList(int idx) throws Exception{
+	public List<FoodDataBean> getBoardCommentaryList(int idx) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List commList = null;
+		List<FoodDataBean> commList = null;
 		String sql = "";
-		BoardDataBean comm = null;
+		FoodDataBean comm = null;
 		try{
 			conn = getConnection();
-			sql  = "select * from boardcommentary where idx=? order by num desc";
+			sql  = "select * from foodcommentary where idx=? order by num desc";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, idx);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
-				commList = new ArrayList();
+				commList = new ArrayList<FoodDataBean>();
 				do{
-					comm = new BoardDataBean();
+					comm = new FoodDataBean();
 					comm.setComm_content(rs.getString("content"));
 					comm.setComm_nickname(rs.getString("nickname"));
 					comm.setComm_wdate(rs.getTimestamp("wdate"));
@@ -641,7 +680,7 @@ public class BoardDBBean {
 		}
 	return commList;
 	}
-	public void insertCommentary(BoardDataBean article) throws Exception{
+	public void insertCommentary(FoodDataBean article) throws Exception{
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -649,14 +688,14 @@ public class BoardDBBean {
 			try{
 				conn = getConnection();
 				
-				sql = "insert into boardcommentary(num,nickname,content,wdate,idx) values" +
-						"(boardcommentary_num_seq.nextval,?,?,?,?)";
+				sql = "insert into foodcommentary(num,nickname,content,wdate,idx) values" +
+						"(foodcommentary_num_seq.nextval,?,?,?,?)";
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, "tester1");
+				pstmt.setString(1, article.getComm_nickname());
 				pstmt.setString(2, article.getComm_content());
 				pstmt.setTimestamp(3, article.getComm_wdate());
 				pstmt.setInt(4, article.getComm_idx());
-				int result =pstmt.executeUpdate();
+				pstmt.executeUpdate();
 			}catch(Exception ex){
 				ex.printStackTrace();
 			}finally{

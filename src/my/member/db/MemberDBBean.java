@@ -690,5 +690,75 @@ public class MemberDBBean {
 		}
 		return cnt;
 	}
-
+	
+	
+	public int loginCheck(String id, String password) throws Exception{
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		int isLogin = 0;
+		try{
+			conn = getConnection();
+			sql = "select count(*) from member where id=? and password=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, password);
+			rs = pstmt.executeQuery();
+			rs.next();
+			isLogin += rs.getInt(1);
+			if(rs.getInt(1)>0 && id.equals("admin") ||rs.getInt(1)>0 && id.equals("pbreaker"))
+				isLogin += 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+		}
+		return isLogin;
+	}
+	public String getNickname(String id) throws Exception{
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		String nickname = "";
+		try{
+			conn = getConnection();
+			sql = "select nickname from member where id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+			nickname = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(rs != null){
+				try{rs.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(pstmt != null){
+				try{pstmt.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+			if(conn != null){
+				try{conn.close();}
+				catch(SQLException e){e.printStackTrace();}
+			}
+		}
+		return nickname;
+	}
+	
 }

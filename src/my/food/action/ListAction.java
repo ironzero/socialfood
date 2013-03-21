@@ -1,16 +1,18 @@
 package my.food.action;
 
 import java.util.*;
+
 import javax.servlet.http.*;
 
 import my.action.*;
-import my.board.db.*;
+import my.food.db.FoodDBBean;
+import my.food.db.FoodDataBean;
+
 
 public class ListAction implements CommandAction{
 	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable{
 		request.setCharacterEncoding("utf-8");
 		String pageNum = request.getParameter("pageNum");
-		//int area = Integer.parseInt(request.getParameter("area"));
 		int area=1;
 		if(pageNum == null){
 			pageNum = "1";
@@ -21,14 +23,13 @@ public class ListAction implements CommandAction{
 		int endRow = currentPage * pageSize;
 		int count = 0;
 		int number= 0;
-		List articleList = null;
-		BoardDBBean dbPro = BoardDBBean.getInstance();
-		count = dbPro.getArticleCount(area);
-		
+		List<FoodDataBean> articleList;
+		FoodDBBean dbPro = FoodDBBean.getInstance();
+		count = dbPro.getArticleCount();
 		if(count >0){
-			articleList = dbPro.getarticleList(startRow, endRow, area);
+			articleList = dbPro.getArticleList(startRow, endRow);
 		}else{
-			articleList = Collections.EMPTY_LIST;
+			articleList = Collections.emptyList();
 		}
 		number = count - (currentPage -1)*pageSize;
 		request.setAttribute("currentPage", currentPage);
@@ -39,6 +40,6 @@ public class ListAction implements CommandAction{
 		request.setAttribute("number", new Integer(number));
 		request.setAttribute("area", new Integer(area));
 		request.setAttribute("articleList", articleList);
-		return "food/list.jsp";
+		return "list.jsp";
 	}
 }

@@ -1,6 +1,6 @@
 package my.food.db;
 
-public class BoardFileBean {
+public class FoodFileBean {
 	private int fileid, filestep;
 	private String filename, realpath;
 	private int idx;

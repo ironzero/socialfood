@@ -5,14 +5,13 @@ import java.util.List;
 
 import my.action.*;
 import javax.servlet.http.*;
-import my.board.db.*;
-
+import my.food.db.*;
 public class ContentAction implements CommandAction{
 	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable{
 		request.setCharacterEncoding("utf-8");
 		int idx = Integer.parseInt(request.getParameter("idx"));
 		String pageNum = request.getParameter("pageNum");
-		BoardDBBean dbPro = BoardDBBean.getInstance();
+		FoodDBBean dbPro = FoodDBBean.getInstance();
 		List fileList = null;
 		
 		if(request.getParameter("rec") != null)
@@ -29,7 +28,7 @@ public class ContentAction implements CommandAction{
 			fileList = Collections.EMPTY_LIST;
 		}
 
-		BoardDataBean article = dbPro.getArticle(idx);
+		FoodDataBean article = dbPro.getArticle(idx);
 		request.setAttribute("filecount", fileCount);
 		request.setAttribute("idx", new Integer(idx));
 		request.setAttribute("pageNum", new Integer(pageNum));
@@ -50,6 +49,6 @@ public class ContentAction implements CommandAction{
 		
 		request.setAttribute("comm_count", comm_count);
 		request.setAttribute("commList", commList);
-		return "food/content.jsp";
+		return "content.jsp";
 	}
 }

@@ -7,9 +7,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>글쓰기 뷰</title>
-<link rel="stylesheet" href="../style.css" type="text/css" />
-<link rel="stylesheet" href="style.css" type="text/css" />
-<script type="text/javascript" src="script.js"></script>
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+<script type="text/javascript" src="js/script.js"></script>
 
 </head>
 <body bgcolor="${bodyback_c }">
@@ -17,7 +16,7 @@
 	<center>
 		<h2>글 쓰 기</h2>
 	</center>
-	<form action="/socialfood/writePro.do" method="post" name="writeform"
+	<form action="/socialfood/board/writePro.do" method="post" name="writeform"
 		enctype="multipart/form-data" onsubmit="return writeSave()">
 
 		<input type="hidden" name="idx" value="${ idx }" /> <input
@@ -82,7 +81,7 @@
 		<center>
 			<input type="submit" value="작성완료" onclick="return sub()" /> <input
 				type="reset" value="다시작성" /> <input type="button" value="목록 보기"
-				onclick="window.location='/socialfood/list.do'" />
+				onclick="window.location='/socialfood/board/list.do'" />
 		</center>
 	</form>
 </body>

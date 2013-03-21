@@ -16,13 +16,13 @@ public class CommentaryWriteAction implements CommandAction{
 		int idx = Integer.parseInt(idtmp);
 		int pageNum = Integer.parseInt(request.getParameter("pageNum"));
 		article.setComm_idx(new Integer(idx));
-		System.out.println(request.getParameter("comm_content"));
 		article.setComm_wdate(new Timestamp(System.currentTimeMillis()));
 		article.setComm_content(request.getParameter("comm_content"));
 		article.setComm_nickname(request.getParameter("nickname"));
 		dbPro.insertCommentary(article);
+		System.out.println(request.getParameter("nickname"));
 		request.setAttribute("pageNum", pageNum);
 		request.setAttribute("idx", idx);
-		return "boaard/content.do?idx="+idx+"&pageNum="+pageNum;
+		return "content.do?idx="+idx+"&pageNum="+pageNum;
 	}
 }

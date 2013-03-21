@@ -42,6 +42,6 @@ public class SearchAction implements CommandAction{
 		request.setAttribute("number", new Integer(number));
 		request.setAttribute("pageNum", new Integer(pageNum));
 		request.setAttribute("articleList", articleList);
-		return "board/search.jsp";
+		return "search.jsp";
 	}
 }

@@ -28,7 +28,6 @@ public class UpdateFormAction implements CommandAction {
 		}else{
 			fileList = Collections.EMPTY_LIST;
 		}
-		System.out.println(idx);
 		BoardFileBean fileBean = dbPro.getFileName(idx);
 		request.setAttribute("filename", fileBean.getFilename());
 		request.setAttribute("filecount", fileCount);
@@ -40,6 +39,6 @@ public class UpdateFormAction implements CommandAction {
 		request.setAttribute("wdate", article.getWdate());
 		request.setAttribute("title", article.getTitle());
 		request.setAttribute("content", article.getContent());
-		return "board/updateForm.jsp";
+		return "updateForm.jsp";
 	}
 }

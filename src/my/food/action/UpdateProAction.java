@@ -9,10 +9,7 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import my.action.CommandAction;
-import my.board.db.BoardDBBean;
-import my.board.db.BoardDataBean;
-import my.board.db.BoardFileBean;
-
+import my.food.db.*;
 public class UpdateProAction implements CommandAction {
 	public String requestPro(HttpServletRequest request,
 			HttpServletResponse response) throws Throwable {
@@ -24,9 +21,9 @@ public class UpdateProAction implements CommandAction {
 				limitSize, "utf-8", new DefaultFileRenamePolicy());
 		int idx = Integer.parseInt(multi.getParameter("idx"));
 		System.out.println(idx);
-		BoardDBBean dbPro = BoardDBBean.getInstance();
-		BoardFileBean fileBean = dbPro.getFileName(idx);
-		BoardDataBean article = new BoardDataBean();
+		FoodDBBean dbPro = FoodDBBean.getInstance();
+		FoodFileBean fileBean = dbPro.getFileName(idx);
+		FoodDataBean article = new FoodDataBean();
 		String originalFileName = fileBean.getFilename();
 		int fileid = fileBean.getFileid();
 		String onFileName = multi.getOriginalFileName("filename");
@@ -34,7 +31,7 @@ public class UpdateProAction implements CommandAction {
 
 		} else {
 			if (onFileName != null) {
-				fileBean = new BoardFileBean();
+				fileBean = new FoodFileBean();
 				String fileName = multi.getFilesystemName("filename");
 				File file = multi.getFile("filename");
 				String fileFullName = upDir + fileName;
@@ -58,7 +55,7 @@ public class UpdateProAction implements CommandAction {
 		dbPro.updateArticle(idx, title, content);
 		request.setAttribute("idx", idx);
 		request.setAttribute("pageNum", multi.getParameter("pageNum"));
-		return "food/updatePro.jsp";
+		return "updatePro.jsp";
 
 	}
 }

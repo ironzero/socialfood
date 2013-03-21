@@ -1,8 +1,8 @@
-package my.food.db;
+package my.travel.db;
 
 import java.sql.*;
 
-public class BoardDataBean {
+public class TravelDataBean {
 	private int idx, read_count, recommand, non_recommand, recommand_count, area, area_idx,ref,depth;
 	private int step;
 	private String title, content, category, nickname,id;

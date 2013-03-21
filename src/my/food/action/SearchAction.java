@@ -4,9 +4,7 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import my.action.CommandAction;
-import my.board.*;
-import my.board.db.BoardDBBean;
-
+import my.food.db.*;
 public class SearchAction implements CommandAction{
 	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable{
 		request.setCharacterEncoding("utf-8");
@@ -24,7 +22,7 @@ public class SearchAction implements CommandAction{
 		int number= 0;
 		int area = 1;
 		List articleList = null;
-		BoardDBBean dbPro = BoardDBBean.getInstance();
+		FoodDBBean dbPro = FoodDBBean.getInstance();
 		count = dbPro.getSearchArticleCount(search, val, area);
 		if(count >0){
 			articleList = dbPro.getSearchArticles(startRow, endRow, search, val, area);
@@ -42,6 +40,6 @@ public class SearchAction implements CommandAction{
 		request.setAttribute("number", new Integer(number));
 		request.setAttribute("pageNum", new Integer(pageNum));
 		request.setAttribute("articleList", articleList);
-		return "food/search.jsp";
+		return "search.jsp";
 	}
 }

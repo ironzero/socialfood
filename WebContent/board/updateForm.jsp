@@ -2,16 +2,16 @@
     pageEncoding="UTF-8"%>
 <%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@include file = "../view/color.jspf" %>    
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 	<title>게시판</title>
-<link rel="stylesheet" href="../style.css" type="text/css" />
+<link rel="stylesheet" href="css/style.css" type="text/css" />
 </head>
 <body bgcolor="${bodyback_c }">
 	<center><b>글내용 보기</b></center>
 	<br />
-	<form action="/socialfood/updatePro.do" method="post" name="updateform" enctype="multipart/form-data" >
+	<form action="/socialfood/board/updatePro.do" method="post" name="updateform" enctype="multipart/form-data" >
 		<input type="hidden" name="idx" value="${idx }">
 		<input type="hidden" name="pageNum" value="${pageNum }">
 		
@@ -34,7 +34,7 @@
 			<input type="text" name="title" value="${title}" size="70"></td>
 		</tr>
 		<tr >
-			<td align="center" width="125" colspan="4" cellpadding ="5"><br/><textarea name="content" rows="15" cols="70">${content}</textarea><br/><br/>
+			<td align="center" width="125" colspan="4" ><font size="5px"><br/></font><textarea name="content" rows="15" cols="70">${content}</textarea><br/><font size="5px"><br/></font>
 			</td>
 		</tr>
 		</table>
@@ -54,7 +54,7 @@
 			<td colspan="4" bgcolor="${value_c }" align="center">
 			<input type="submit" value="수정완료">
 			<input type="button" value="목록" 
-			onclick="document.location.href='/socialfood/list.do?pageNum=${pageNum}'"/>
+			onclick="document.location.href='/socialfood/board/list.do?pageNum=${pageNum}'"/>
 			</td>
 		</tr>
 		</table>

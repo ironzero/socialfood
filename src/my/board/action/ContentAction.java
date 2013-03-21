@@ -23,12 +23,13 @@ public class ContentAction implements CommandAction{
 		
 		int fileCount = 0;
 		fileCount = dbPro.getFileCount(idx);
-				if(fileCount >0){
+		
+		if(fileCount >0){
 			fileList = dbPro.getFileList(idx); 
 		}else{
 			fileList = Collections.EMPTY_LIST;
 		}
-
+				
 		BoardDataBean article = dbPro.getArticle(idx);
 		request.setAttribute("filecount", fileCount);
 		request.setAttribute("idx", new Integer(idx));
@@ -36,6 +37,7 @@ public class ContentAction implements CommandAction{
 		request.setAttribute("article", article);
 		request.setAttribute("recommand", article.getRecommand());
 		request.setAttribute("non_recommand", article.getNon_recommand());
+		request.setAttribute("nickname", article.getNickname());
 		request.setAttribute("fileList", fileList);
 
 		List commList =null;
@@ -50,6 +52,6 @@ public class ContentAction implements CommandAction{
 		
 		request.setAttribute("comm_count", comm_count);
 		request.setAttribute("commList", commList);
-		return "board/content.jsp";
+		return "content.jsp";
 	}
 }
