@@ -15,8 +15,12 @@ public class LoginAction implements CommandAction{
 		MemberDBBean dbPro = MemberDBBean.getInstance();
 		int isLogin = dbPro.loginCheck(id, password);
 		MemberBean member = dbPro.getMemberInfo(id);
-		int point = member.getPoint();
-		String nickname = member.getNickname();
+		int point = 0;
+		String nickname = null;
+		if (member != null) {
+			point = member.getPoint();
+			nickname = member.getNickname();			
+		}
 		HttpSession session = request.getSession();
 		session.setAttribute("isLogin", isLogin);
 		session.setAttribute("id", id);

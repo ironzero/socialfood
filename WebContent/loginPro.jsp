@@ -15,13 +15,17 @@
 		</c:if>
 		<c:if test="${isLogin == 1 }">
 		로그인성공!
+			<script>
+				opener.location.reload(true);
+				window.close();
+			</script>
 		</c:if>
 		<c:if test="${isLogin == 2 }">
 		관리자..
+			<script>
+				opener.location.reload(true);
+				window.close();
+			</script>
 		</c:if>
-		<script>
-			opener.location.reload(true);
-			window.close();
-		</script>
 </body>
 </html>

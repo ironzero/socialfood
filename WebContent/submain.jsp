@@ -49,7 +49,7 @@ function heartBeat() {
         </tr>
     </table>
 </div>
-<p align="center" style="line-height:100%; margin-top:0; margin-bottom:0;"><img src="image/sub_main_up.png" width="1000" height="190" border="0"></p>
+<p align="center" style="line-height:100%; margin-top:0; margin-bottom:0;"><a href="/socialfood/"><img src="image/sub_main_up.png" width="1000" height="190" border="0"></a></p>
 <p style="line-height:100%; margin-top:0; margin-bottom:0;" align="center"><img src="image/submenu.png" width="990" height="65" border="0" usemap="#ImageMap2"></p>
 <p style="line-height:100%; margin-top:0; margin-bottom:0;" align="center"><map name="ImageMap2">
 
